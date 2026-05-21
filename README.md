@@ -93,8 +93,11 @@ src/main/java/com/flowdesk/
 │   └── Note.java
 
 └── dto/
+
     ├── RegisterRequest.java
+    
     ├── LoginRequest.java
+    
     └── AuthResponse.java
 
 ---
