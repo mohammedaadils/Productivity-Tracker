@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FlowDesk</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #fafaf9;
+      --surface: #ffffff;
+      --surface2: #f5f5f3;
+      --border: #e5e4e2;
+      --text-primary: #1c1c1a;
+      --text-secondary: #6b6b67;
+      --text-muted: #a8a8a4;
+      --accent: #3b5bdb;
+      --accent-hover: #2f4ac4;
+      --accent-light: #eef1fd;
+      --green: #2d6a4f;
+      --green-bg: #f0faf5;
+      --red: #c0392b;
+      --red-bg: #fdf2f2;
+      --yellow: #92400e;
+      --yellow-bg: #fffbeb;
+      --radius: 8px;
+      --font: 'DM Sans', sans-serif;
+      --mono: 'DM Mono', monospace;
+      --sidebar-w: 220px;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      position: fixed;
+      top: 0; left: 0;
+    }
+
+    .sidebar-logo {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      padding: 0 20px 24px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    .sidebar-logo span { color: var(--accent); }
+
+    .sidebar-nav {
+      padding: 16px 12px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.1s ease;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item:hover { background: var(--surface2); color: var(--text-primary); }
+
+    .nav-item.active {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+    .sidebar-footer {
+      padding: 16px 12px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 6px;
+    }
+
+    .user-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      flex: 1;
+    }
+
+    .logout-btn {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: var(--font);
+    }
+
+    .logout-btn:hover { color: var(--red); }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── VIEWS ── */
+    .view { display: none; padding: 36px 40px; }
+    .view.active { display: block; }
+
+    .view-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .view-title {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.4px;
+    }
+
+    .view-date {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--mono);
+    }
+
+    /* ── DASHBOARD ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: -1px;
+      color: var(--text-primary);
+      font-family: var(--mono);
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .dash-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .dash-card-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* ── TASKS ── */
+    .task-input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .task-input-row input, .task-input-row select {
+      font-family: var(--font);
+      font-size: 13.5px;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .task-input-row input:focus,
+    .task-input-row select:focus { border-color: #94a3b8; }
+
+    .task-input-row input[type="text"] { flex: 1; }
+
+    .btn {
+      padding: 9px 16px;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    .btn-ghost {
+      background: none;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover { background: var(--surface2); }
+
+    .task-list { display: flex; flex-direction: column; gap: 1px; }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 12px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: background 0.1s;
+    }
+
+    .task-item:hover { background: var(--surface2); }
+
+    .task-check {
+      width: 16px; height: 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.1s;
+    }
+
+    .task-check:hover { border-color: var(--accent); }
+
+    .task-check.done {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .task-check.done::after {
+      content: '';
+      width: 8px; height: 5px;
+      border-left: 1.5px solid white;
+      border-bottom: 1.5px solid white;
+      transform: rotate(-45deg) translateY(-1px);
+      display: block;
+    }
+
+    .task-text { flex: 1; font-size: 13.5px; }
+
+    .task-text.done {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .priority-tag {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 7px;
+      border-radius: 20px;
+      font-family: var(--mono);
+    }
+
+    .priority-HIGH { background: var(--red-bg); color: var(--red); }
+    .priority-MEDIUM { background: var(--yellow-bg); color: var(--yellow); }
+    .priority-LOW { background: var(--green-bg); color: var(--green); }
+
+    .task-date {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--mono);
+    }
+
+    .task-delete {
+      font-size: 14px;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    .task-item:hover .task-delete { opacity: 1; }
+    .task-delete:hover { color: var(--red); }
+
+    /* ── PLANNER ── */
+    .planner-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .planner-date-input {
+      font-family: var(--mono);
+      font-size: 13px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .timeline-slot {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid var(--border);
+      min-height: 52px;
+    }
+
+    .timeline-slot:last-child { border-bottom: none; }
+
+    .slot-time {
+      width: 72px;
+      padding: 16px 12px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      border-right: 1px solid var(--border);
+      flex-shrink: 0;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .slot-time.current-hour {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .slot-content {
+      flex: 1;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .slot-event {
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border-left: 2px solid var(--accent);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slot-event-delete {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--accent);
+      font-size: 13px;
+      opacity: 0.5;
+      padding: 0 2px;
+    }
+
+    .slot-event-delete:hover { opacity: 1; }
+
+    .add-event-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .add-event-form input {
+      font-family: var(--font);
+      font-size: 13px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .add-event-form input:focus { border-color: #94a3b8; }
+
+    /* ── HABITS ── */
+    .habits-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .habit-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .habit-card.completed {
+      border-color: #b7dfc9;
+      background: var(--green-bg);
+    }
+
+    .habit-icon { font-size: 24px; }
+
+    .habit-info { flex: 1; }
+
+    .habit-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .habit-streak {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--mono);
+    }
+
+    .habit-toggle {
+      width: 36px; height: 20px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--surface2);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .habit-toggle::after {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      top: 1px; left: 1px;
+      transition: all 0.2s;
+    }
+
+    .habit-toggle.on {
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .habit-toggle.on::after {
+      background: white;
+      left: 17px;
+    }
+
+    /* ── NOTES ── */
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .note-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      position: relative;
+    }
+
+    .note-content {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+    }
+
+    .note-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--mono);
+      margin-top: 12px;
+    }
+
+    .note-delete {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.1s;
+      border-radius: 4px;
+      padding: 2px 5px;
+    }
+
+    .note-card:hover .note-delete { opacity: 1; }
+    .note-delete:hover { color: var(--red); background: var(--red-bg); }
+
+    .note-input-area {
+      width: 100%;
+      padding: 12px;
+      font-family: var(--font);
+      font-size: 13.5px;
+      line-height: 1.6;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      resize: vertical;
+      min-height: 90px;
+      background: var(--surface);
+      color: var(--text-primary);
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    .note-input-area:focus { border-color: #94a3b8; }
+
+    /* ── EMPTY STATE ── */
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* ── LOADING ── */
+    .loading {
+      text-align: center;
+      padding: 24px;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-family: var(--mono);
+    }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Flow<span>Desk</span></div>
+  <nav class="sidebar-nav">
+    <button class="nav-item active" onclick="showView('dashboard')">
+      <span class="nav-icon">▣</span> Dashboard
+    </button>
+    <button class="nav-item" onclick="showView('tasks')">
+      <span class="nav-icon">✓</span> Tasks
+    </button>
+    <button class="nav-item" onclick="showView('planner')">
+      <span class="nav-icon">◷</span> Planner
+    </button>
+    <button class="nav-item" onclick="showView('habits')">
+      <span class="nav-icon">◎</span> Habits
+    </button>
+    <button class="nav-item" onclick="showView('notes')">
+      <span class="nav-icon">▤</span> Notes
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-avatar" id="avatar">A</div>
+      <span class="user-name" id="username">—</span>
+      <button class="logout-btn" onclick="logout()">out</button>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- DASHBOARD VIEW -->
+  <div class="view active" id="view-dashboard">
+    <div class="view-header">
+      <h1 class="view-title">Good morning</h1>
+      <span class="view-date" id="today-date">—</span>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Tasks</div>
+        <div class="stat-value" id="stat-total">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value" id="stat-completed">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pending</div>
+        <div class="stat-value" id="stat-pending">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Habits Today</div>
+        <div class="stat-value" id="stat-habits">—</div>
+        <div class="stat-sub">streak total: <span id="stat-streak">0</span></div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-card-title">Pending Tasks</div>
+        <div id="dash-tasks" class="task-list"><div class="loading">Loading...</div></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">Today's Habits</div>
+        <div id="dash-habits"><div class="loading">Loading...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASKS VIEW -->
+  <div class="view" id="view-tasks">
+    <div class="view-header">
+      <h1 class="view-title">Tasks</h1>
+    </div>
+    <div class="task-input-row">
+      <input type="text" id="task-title" placeholder="Add a task..." />
+      <select id="task-priority">
+        <option value="MEDIUM">Medium</option>
+        <option value="HIGH">High</option>
+        <option value="LOW">Low</option>
+      </select>
+      <input type="text" id="task-category" placeholder="Category" style="width:120px"/>
+      <input type="date" id="task-deadline"/>
+      <button class="btn btn-primary" onclick="createTask()">Add</button>
+    </div>
+    <div id="tasks-list" class="task-list"><div class="loading">Loading...</div></div>
+  </div>
+
+  <!-- PLANNER VIEW -->
+  <div class="view" id="view-planner">
+    <div class="view-header">
+      <h1 class="view-title">Planner</h1>
+    </div>
+    <div class="add-event-form">
+      <input type="text" id="event-activity" placeholder="Activity name..." style="flex:1"/>
+      <input type="time" id="event-start"/>
+      <input type="time" id="event-end"/>
+      <button class="btn btn-primary" onclick="addScheduleEvent()">Add</button>
+    </div>
+    <div class="planner-header">
+      <input type="date" id="planner-date" class="planner-date-input" onchange="loadSchedule()"/>
+    </div>
+    <div class="timeline" id="timeline"></div>
+  </div>
+
+  <!-- HABITS VIEW -->
+  <div class="view" id="view-habits">
+    <div class="view-header">
+      <h1 class="view-title">Habits</h1>
+    </div>
+    <div class="habits-grid" id="habits-grid"><div class="loading">Loading...</div></div>
+  </div>
+
+  <!-- NOTES VIEW -->
+  <div class="view" id="view-notes">
+    <div class="view-header">
+      <h1 class="view-title">Notes</h1>
+    </div>
+    <textarea class="note-input-area" id="note-input" placeholder="Write a quick note..."></textarea>
+    <button class="btn btn-primary" onclick="createNote()" style="margin-bottom:24px">Save note</button>
+    <div class="notes-grid" id="notes-grid"><div class="loading">Loading...</div></div>
+  </div>
+
+</main>
+
+<script>
+  const API = 'http://127.0.0.1:8080/api';
+  const token = localStorage.getItem('fd_token');
+  const name = localStorage.getItem('fd_name') || 'User';
+
+  if (!token) window.location.href = 'login.html';
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  };
+
+  // ── Init ──
+  document.getElementById('username').textContent = name;
+  document.getElementById('avatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  const greetings = { morning: 'Good morning', afternoon: 'Good afternoon', evening: 'Good evening' };
+  const h = new Date().getHours();
+  const greeting = h < 12 ? greetings.morning : h < 17 ? greetings.afternoon : greetings.evening;
+  document.querySelector('#view-dashboard .view-title').textContent = `${greeting}, ${name.split(' ')[0]}`;
+
+  // Planner date default
+  document.getElementById('planner-date').value = new Date().toISOString().split('T')[0];
+
+  const HABIT_ICONS = { Gym: '🏋️', Coding: '💻', Sleep: '😴', Water: '💧' };
+
+  // ── Nav ──
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('view-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+
+    if (id === 'dashboard') loadDashboard();
+    if (id === 'tasks') loadTasks();
+    if (id === 'planner') loadSchedule();
+    if (id === 'habits') loadHabits();
+    if (id === 'notes') loadNotes();
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = 'login.html';
+  }
+
+  // ── Dashboard ──
+  async function loadDashboard() {
+    try {
+      const [statsRes, tasksRes, habitsRes] = await Promise.all([
+        fetch(`${API}/dashboard/stats`, { headers }),
+        fetch(`${API}/tasks`, { headers }),
+        fetch(`${API}/habits`, { headers })
+      ]);
+      const stats = await statsRes.json();
+      const tasks = await tasksRes.json();
+      const habits = await habitsRes.json();
+
+      document.getElementById('stat-total').textContent = stats.totalTasks;
+      document.getElementById('stat-completed').textContent = stats.completedTasks;
+      document.getElementById('stat-pending').textContent = stats.pendingTasks;
+      document.getElementById('stat-habits').textContent = stats.habitsCompletedToday + '/4';
+      document.getElementById('stat-streak').textContent = stats.totalHabitStreak;
+
+      const pending = tasks.filter(t => t.status === 'PENDING').slice(0, 5);
+      const dashTasks = document.getElementById('dash-tasks');
+      dashTasks.innerHTML = pending.length ? pending.map(t => taskItemHTML(t)).join('') : '<div class="empty">All clear ✓</div>';
+
+      const dashHabits = document.getElementById('dash-habits');
+      dashHabits.innerHTML = habits.map(h => `
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <span>${HABIT_ICONS[h.habitName] || '◎'}</span>
+          <span style="flex:1;font-size:13.5px">${h.habitName}</span>
+          <span style="font-size:11px;font-family:var(--mono);color:${h.completedToday ? 'var(--green)' : 'var(--text-muted)'}">
+            ${h.completedToday ? '✓ done' : '—'}
+          </span>
+        </div>`).join('');
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  // ── Tasks ──
+  let allTasks = [];
+
+  function taskItemHTML(t) {
+    return `
+      <div class="task-item" id="task-${t.id}">
+        <div class="task-check ${t.status === 'COMPLETED' ? 'done' : ''}" onclick="toggleTask(${t.id}, '${t.status}')"></div>
+        <span class="task-text ${t.status === 'COMPLETED' ? 'done' : ''}">${t.title}</span>
+        <div class="task-meta">
+          ${t.priority ? `<span class="priority-tag priority-${t.priority}">${t.priority}</span>` : ''}
+          ${t.deadline ? `<span class="task-date">${t.deadline}</span>` : ''}
+          <button class="task-delete" onclick="deleteTask(${t.id})">✕</button>
+        </div>
+      </div>`;
+  }
+
+  async function loadTasks() {
+    const list = document.getElementById('tasks-list');
+    try {
+      const res = await fetch(`${API}/tasks`, { headers });
+      allTasks = await res.json();
+      list.innerHTML = allTasks.length ? allTasks.map(taskItemHTML).join('') : '<div class="empty">No tasks yet. Add one above.</div>';
+    } catch(e) { list.innerHTML = '<div class="empty">Error loading tasks.</div>'; }
+  }
+
+  async function createTask() {
+    const title = document.getElementById('task-title').value.trim();
+    if (!title) return;
+    const body = {
+      title,
+      priority: document.getElementById('task-priority').value,
+      category: document.getElementById('task-category').value || null,
+      deadline: document.getElementById('task-deadline').value || null
+    };
+    await fetch(`${API}/tasks`, { method: 'POST', headers, body: JSON.stringify(body) });
+    document.getElementById('task-title').value = '';
+    document.getElementById('task-deadline').value = '';
+    document.getElementById('task-category').value = '';
+    loadTasks();
+  }
+
+  async function toggleTask(id, status) {
+    if (status === 'COMPLETED') return;
+    await fetch(`${API}/tasks/${id}/complete`, { method: 'PATCH', headers });
+    loadTasks();
+  }
+
+  async function deleteTask(id) {
+    await fetch(`${API}/tasks/${id}`, { method: 'DELETE', headers });
+    loadTasks();
+  }
+
+  // ── Planner ──
+  async function loadSchedule() {
+    const date = document.getElementById('planner-date').value;
+    const res = await fetch(`${API}/schedule?date=${date}`, { headers });
+    const events = await res.json();
+
+    const currentHour = new Date().getHours();
+    const hours = Array.from({ length: 16 }, (_, i) => i + 7); // 7am to 10pm
+
+    const timeline = document.getElementById('timeline');
+    timeline.innerHTML = hours.map(h => {
+      const label = h === 0 ? '12 AM' : h < 12 ? `${h} AM` : h === 12 ? '12 PM' : `${h-12} PM`;
+      const isCurrent = h === currentHour;
+      const hourStr = String(h).padStart(2, '0') + ':00';
+      const slotEvents = events.filter(e => e.startTime && e.startTime.startsWith(String(h).padStart(2, '0')));
+      return `
+        <div class="timeline-slot">
+          <div class="slot-time ${isCurrent ? 'current-hour' : ''}">${label}</div>
+          <div class="slot-content">
+            ${slotEvents.map(e => `
+              <div class="slot-event">
+                <span>${e.activity} <span style="opacity:0.6;font-size:10px">${e.startTime?.slice(0,5)}–${e.endTime?.slice(0,5)}</span></span>
+                <button class="slot-event-delete" onclick="deleteScheduleEvent(${e.id})">✕</button>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  async function addScheduleEvent() {
+    const activity = document.getElementById('event-activity').value.trim();
+    const startTime = document.getElementById('event-start').value;
+    const endTime = document.getElementById('event-end').value;
+    const date = document.getElementById('planner-date').value;
+    if (!activity || !startTime || !endTime || !date) return;
+    await fetch(`${API}/schedule`, {
+      method: 'POST', headers,
+      body: JSON.stringify({ date, startTime: startTime + ':00', endTime: endTime + ':00', activity })
+    });
+    document.getElementById('event-activity').value = '';
+    loadSchedule();
+  }
+
+  async function deleteScheduleEvent(id) {
+    await fetch(`${API}/schedule/${id}`, { method: 'DELETE', headers });
+    loadSchedule();
+  }
+
+  // ── Habits ──
+  async function loadHabits() {
+    const grid = document.getElementById('habits-grid');
+    try {
+      const res = await fetch(`${API}/habits`, { headers });
+      const habits = await res.json();
+      grid.innerHTML = habits.map(h => `
+        <div class="habit-card ${h.completedToday ? 'completed' : ''}" id="habit-${h.id}">
+          <div class="habit-icon">${HABIT_ICONS[h.habitName] || '◎'}</div>
+          <div class="habit-info">
+            <div class="habit-name">${h.habitName}</div>
+            <div class="habit-streak">${h.streak} day streak</div>
+          </div>
+          <div class="habit-toggle ${h.completedToday ? 'on' : ''}" onclick="toggleHabit(${h.id}, ${h.completedToday})"></div>
+        </div>`).join('');
+    } catch(e) { grid.innerHTML = '<div class="empty">Error loading habits.</div>'; }
+  }
+
+  async function toggleHabit(id, isDone) {
+    const url = isDone ? `${API}/habits/${id}/reset` : `${API}/habits/${id}/complete`;
+    await fetch(url, { method: 'PATCH', headers });
+    loadHabits();
+  }
+
+  // ── Notes ──
+  async function loadNotes() {
+    const grid = document.getElementById('notes-grid');
+    try {
+      const res = await fetch(`${API}/notes`, { headers });
+      const notes = await res.json();
+      grid.innerHTML = notes.length ? notes.map(n => `
+        <div class="note-card">
+          <button class="note-delete" onclick="deleteNote(${n.id})">✕</button>
+          <div class="note-content">${n.content}</div>
+          <div class="note-time">${new Date(n.createdAt).toLocaleDateString('en-IN', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+        </div>`).join('') : '<div class="empty" style="grid-column:1/-1">No notes yet.</div>';
+    } catch(e) { grid.innerHTML = '<div class="empty">Error loading notes.</div>'; }
+  }
+
+  async function createNote() {
+    const content = document.getElementById('note-input').value.trim();
+    if (!content) return;
+    await fetch(`${API}/notes`, { method: 'POST', headers, body: JSON.stringify({ content }) });
+    document.getElementById('note-input').value = '';
+    loadNotes();
+  }
+
+  async function deleteNote(id) {
+    await fetch(`${API}/notes/${id}`, { method: 'DELETE', headers });
+    loadNotes();
+  }
+
+  // ── Boot ──
+  loadDashboard();
+</script>
+</body>
+</html>
