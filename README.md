@@ -49,27 +49,49 @@ Authorization: Bearer <token>
 ## Project Structure
 
 src/main/java/com/flowdesk/
+
 ├── FlowDeskApplication.java
+
 ├── config/
+
 │   ├── JwtUtil.java
+
 │   ├── JwtAuthFilter.java
+
 │   └── SecurityConfig.java
+
 ├── controller/
-│   └── AuthController.java          ← more coming
+
+│   └── AuthController.java      
+
 ├── service/
-│   └── AuthService.java             ← more coming
+
+│   └── AuthService.java      
+
 ├── repository/
+
 │   ├── UserRepository.java
+
 │   ├── TaskRepository.java
+
 │   ├── ScheduleRepository.java
+
 │   ├── HabitRepository.java
+
 │   └── NoteRepository.java
+
 ├── model/
+
 │   ├── User.java
+
 │   ├── Task.java
+
 │   ├── Schedule.java
+
 │   ├── Habit.java
+
 │   └── Note.java
+
 └── dto/
     ├── RegisterRequest.java
     ├── LoginRequest.java
